@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.0.7" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="12"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="profeopina_db" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="user" layers="0" alias="Usuario" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="420" y="20"/>
+	<column name="id" alias="Id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="email" alias="Correo" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<column name="password" alias="Contraseña" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="user_pk" type="pk-constr" table="public.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="teacher" layers="0" alias="Profesor" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="840" y="20"/>
+	<column name="firstName" alias="Nombre" not-null="true">
+		<type name="varchar" length="35"/>
+	</column>
+	<column name="lastName" alias="Apellido" not-null="true">
+		<type name="varchar" length="35"/>
+	</column>
+	<column name="countryCode">
+		<type name="char" length="2"/>
+	</column>
+	<column name="regionCode">
+		<type name="varchar" length="3"/>
+	</column>
+
+	<customidxs object-type="constraint">
+		<object name="teacher_pk" index="0"/>
+	</customidxs>
+</table>
+
+<table name="admin" layers="0" alias="Administrador" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="20" y="20"/>
+</table>
+
+<table name="review" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="860" y="380"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="text" not-null="true">
+		<type name="varchar" length="1000"/>
+	</column>
+	<constraint name="review_pk" type="pk-constr" table="public.review">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_teacher" index="1"/>
+		<object name="id_user" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="teacher_fk" index="1"/>
+		<object name="user_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="admin_inherits_user" type="relgen" layers="0"
+	 pk-pattern="{dt}_pk"
+	 custom-color="#9ca8f8"
+	 src-table="public.admin"
+	 dst-table="public.&quot;user&quot;">
+	<special-pk-cols indexes="0"/>
+</relationship>
+
+<relationship name="teacher_inherits_user" type="relgen" layers="0"
+	 pk-pattern="{dt}_pk"
+	 custom-color="#89f86a"
+	 src-table="public.teacher"
+	 dst-table="public.&quot;user&quot;">
+	<special-pk-cols indexes="0"/>
+</relationship>
+
+<relationship name="teacher_has_many_review" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f58e38"
+	 src-table="public.teacher"
+	 dst-table="public.review"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="74.9591" y="-27.153"/>
+	</label>
+</relationship>
+
+<table name="college" layers="0" alias="Colegio" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1440" y="340"/>
+	<column name="id" alias="Id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="college_pk" type="pk-constr" table="public.college">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="teacher_college" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<position x="1400" y="20"/>
+</table>
+
+<relationship name="college_has_many_teacher" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.college"
+	 dst-table="public.teacher_college"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="teacher_has_many_college" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.teacher"
+	 dst-table="public.teacher_college"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="user_has_many_review" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#16af01"
+	 src-table="public.&quot;user&quot;"
+	 dst-table="public.review"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<table name="reply" layers="0" alias="Respuesta" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1260" y="400"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<constraint name="reply_pk" type="pk-constr" table="public.reply">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="review_has_one_reply" type="rel11" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#2a5c7b"
+	 src-table="public.reply"
+	 dst-table="public.review"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<table name="report" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="40" y="240"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="url" not-null="true">
+		<type name="varchar" length="500"/>
+	</column>
+	<constraint name="reporte_pk" type="pk-constr" table="public.report">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_user" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="user_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="user_has_many_report" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#bb6bfd"
+	 src-table="public.&quot;user&quot;"
+	 dst-table="public.report"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<table name="bookmark" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<position x="100" y="620"/>
+</table>
+
+<relationship name="user_has_many_bookmark" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.&quot;user&quot;"
+	 dst-table="public.bookmark"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<relationship name="review_has_many_bookmark" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.review"
+	 dst-table="public.bookmark"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+</dbmodel>
