@@ -16,7 +16,7 @@ class UserController extends BaseController
     protected function validateRequest(Request $request)
     {
         return $request->validate([
-            // 'content' => 'required',
+            'name' => 'required',
             // Add validation rules for other attributes specific to this controller
         ]);
     }

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 abstract class BaseController extends Controller
 {
     protected $modelClass;
+    protected $validationRules = [];
 
     // Constructor to set the model class
     public function __construct()
@@ -19,32 +21,40 @@ abstract class BaseController extends Controller
     public function index()
     {
         // Use the index method with the model class
-        return $this->modelClass::all();
+        return $this->index($this->modelClass);
     }
 
     // Create a new resource
-    public function store(Request $request)
+    protected function store(Request $request)
     {
         return $this->tryCatch(function () use ($request) {
-            $validatedData = $this->validateRequest($request);
-            $modelInstance = $this->modelClass::create($validatedData);
-            return response()->json($modelInstance, 201);
+            $validationResult = $this->validateRequest($request);
+            if ($validationResult['success']) {
+                $modelInstance = $this->modelClass::create($request->all());
+                return response()->json($validationResult, 201);
+            } else {
+                return response()->json($validationResult, 422);
+            }
         });
     }
 
     // Update an existing resource
-    public function update(Request $request, $id)
+    protected function update(Request $request, $id)
     {
         return $this->tryCatch(function () use ($request, $id) {
-            $modelInstance = $this->findModel($id);
-            $validatedData = $this->validateRequest($request);
-            $modelInstance->update($validatedData);
-            return response()->json(['message' => 'Model updated successfully.']);
+            $validationResult = $this->validateRequest($request);
+            if ($validationResult['success']) {
+                $modelInstance = $this->findModel($id);
+                $modelInstance->update($request->all());
+                return response()->json($validationResult, 201);
+            } else {
+                return response()->json($validationResult, 422);
+            }
         });
     }
 
     // Show a specific resource
-    public function show($id)
+    protected function show($id)
     {
         return $this->tryCatch(function () use ($id) {
             $modelInstance = $this->findModel($id);
@@ -53,7 +63,7 @@ abstract class BaseController extends Controller
     }
 
     // Delete a specific resource
-    public function destroy($id)
+    protected function destroy($id)
     {
         return $this->tryCatch(function () use ($id) {
             $modelInstance = $this->findModel($id);
@@ -72,9 +82,6 @@ abstract class BaseController extends Controller
         }
     }
 
-    // Abstract method to be implemented by child controllers for validation
-    protected abstract function validateRequest(Request $request);
-
     // Abstract method to be implemented by child controllers to retrieve the model class name
     protected abstract function getModelClass();
 
@@ -86,5 +93,23 @@ abstract class BaseController extends Controller
             return response()->json(['message' => 'Model not found.'], 404);
         }
         return $modelInstance;
+    }
+
+    // Validation method
+    protected function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->validationRules);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Data is valid.'
+        ];
     }
 }

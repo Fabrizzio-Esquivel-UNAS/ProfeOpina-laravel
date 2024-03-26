@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 
-class SubscriptionController extends BaseController
+class StudentController extends BaseController
 {
     protected function getModelClass()
     {
