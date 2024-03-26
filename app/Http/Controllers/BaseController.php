@@ -21,11 +21,11 @@ abstract class BaseController extends Controller
     public function index()
     {
         // Use the index method with the model class
-        return $this->index($this->modelClass);
+        return $this->modelClass::all();
     }
 
     // Create a new resource
-    protected function store(Request $request)
+    public function store(Request $request)
     {
         return $this->tryCatch(function () use ($request) {
             $validationResult = $this->validateRequest($request);
@@ -39,7 +39,7 @@ abstract class BaseController extends Controller
     }
 
     // Update an existing resource
-    protected function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         return $this->tryCatch(function () use ($request, $id) {
             $validationResult = $this->validateRequest($request);
@@ -54,7 +54,7 @@ abstract class BaseController extends Controller
     }
 
     // Show a specific resource
-    protected function show($id)
+    public function show($id)
     {
         return $this->tryCatch(function () use ($id) {
             $modelInstance = $this->findModel($id);
@@ -63,7 +63,7 @@ abstract class BaseController extends Controller
     }
 
     // Delete a specific resource
-    protected function destroy($id)
+    public function destroy($id)
     {
         return $this->tryCatch(function () use ($id) {
             $modelInstance = $this->findModel($id);

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Comment;
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class ReviewFactory extends Factory
     {
         return [
             //
+            'user_id' => User::factory()->create(),
             'profile_id' => Profile::factory()->hasTeacher()->create(),
             'comment_id' => Comment::factory(),
             'score' => fake()->randomElement(['Positivo','Mixto','Negativo']),

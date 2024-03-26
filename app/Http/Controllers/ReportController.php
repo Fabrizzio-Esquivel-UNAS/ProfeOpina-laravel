@@ -12,14 +12,10 @@ class ReportController extends BaseController
         return Report::class;
     }
 
-    // Implement validateRequest method for the controller
-    protected function validateRequest(Request $request)
-    {
-        return $request->validate([
-            // 'content' => 'required',
-            // Add validation rules for other attributes specific to this controller
-        ]);
-    }
+    protected $validationRules = [
+        #'name' => 'required|string|max:255',
+        // Add more validation rules as needed
+    ];
 
     // Implement additional controller-specific methods if needed
 }
